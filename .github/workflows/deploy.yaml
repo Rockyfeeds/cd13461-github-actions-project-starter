@@ -41,16 +41,16 @@ jobs:
         id: npm-cache
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-modules-v2-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-node-modules-v3-${{ hashFiles('package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-modules-v2-
+            ${{ runner.os }}-node-modules-v3-
 
       - name: Install Dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: |
           npm install --ignore-scripts --legacy-peer-deps
           npm install --platform=linux --arch=x64 sharp
-          npx pagefind@latest --help > /dev/null 2>&1 || true
+          npm install pagefind@1.0.4
 
       - name: Run Linters
         run: npm run lint:all
@@ -87,9 +87,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-modules-v2-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-node-modules-v3-${{ hashFiles('package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-modules-v2-
+            ${{ runner.os }}-node-modules-v3-
 
       - name: Install Dependencies
         run: |
@@ -116,6 +116,9 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
@@ -129,5 +132,6 @@ jobs:
         run: |
           TODAY=$(date +'%Y-%m-%d')
           gh issue create \
+            --repo "${{ github.repository }}" \
             --title "$TODAY - Deployment: $STATUS" \
             --body "URL: $PAGE_URL"
