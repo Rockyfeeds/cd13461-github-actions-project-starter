@@ -47,7 +47,9 @@ jobs:
 
       - name: Install Dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: npm install --ignore-scripts --legacy-peer-deps
+        run: |
+          npm install --ignore-scripts --legacy-peer-deps
+          npm install --platform=linux --arch=x64 sharp
 
       - name: Run Linters
         run: npm run lint:all
@@ -89,7 +91,9 @@ jobs:
             ${{ runner.os }}-node-modules-
 
       - name: Install Dependencies
-        run: npm install --ignore-scripts --legacy-peer-deps
+        run: |
+          npm install --ignore-scripts --legacy-peer-deps
+          npm install --platform=linux --arch=x64 sharp
 
       - name: Build Static Site with Eleventy
         run: |
