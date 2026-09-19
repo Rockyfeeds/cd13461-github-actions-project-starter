@@ -41,15 +41,16 @@ jobs:
         id: npm-cache
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-node-modules-v2-${{ hashFiles('package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-modules-
+            ${{ runner.os }}-node-modules-v2-
 
       - name: Install Dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: |
           npm install --ignore-scripts --legacy-peer-deps
           npm install --platform=linux --arch=x64 sharp
+          npx pagefind@latest --help > /dev/null 2>&1 || true
 
       - name: Run Linters
         run: npm run lint:all
@@ -86,14 +87,15 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-node-modules-v2-${{ hashFiles('package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-modules-
+            ${{ runner.os }}-node-modules-v2-
 
       - name: Install Dependencies
         run: |
           npm install --ignore-scripts --legacy-peer-deps
           npm install --platform=linux --arch=x64 sharp
+          npm install pagefind@1.0.4
 
       - name: Build Static Site with Eleventy
         run: |
